@@ -1,14 +1,15 @@
 
+#Ignore thumbnails
 Thumbs.db
 
 #User solution and project settings
 *.user
 *.suo
-*.sln.cache 
+*.sln.cache
 
 #Build output
 [bB]in/
-[oO]bj/ 
+[oO]bj/
 
 #Test files
 TestResults/
