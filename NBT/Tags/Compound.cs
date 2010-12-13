@@ -3,7 +3,7 @@ using System.Text;
 
 namespace MCLib.NBT.Tags
 {
-    [TagId(TagId.Compound)]
+    [TagId(Enums.Tag.Compound)]
     public class Compound : TagListBase<string>
     {
         #region Overrides of TagBase
@@ -14,9 +14,9 @@ namespace MCLib.NBT.Tags
 
             while (true)
             {
-                var id = (TagId)stream.ReadByte();
+                var id = (Enums.Tag)stream.ReadByte();
 
-                if (id == TagId.End)
+                if (id == Enums.Tag.End)
                     break;
 
                 try
@@ -41,7 +41,7 @@ namespace MCLib.NBT.Tags
                 t.Value.Write(stream);
             }
 
-            stream.Write((byte) TagId.End);
+            stream.Write((byte) Enums.Tag.End);
         }
 
         #endregion

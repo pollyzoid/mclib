@@ -42,6 +42,10 @@
   <ItemGroup>
     <Compile Include="BinaryReaderMC.cs" />
     <Compile Include="BinaryWriterMC.cs" />
+    <Compile Include="Enums\Block.cs" />
+    <Compile Include="Enums\Item.cs" />
+    <Compile Include="Enums\Packet.cs" />
+    <Compile Include="Enums\Tag.cs" />
     <Compile Include="NBT\File.cs" />
     <Compile Include="NBT\Tags\Compound.cs" />
     <Compile Include="NBT\Tags\List.cs" />

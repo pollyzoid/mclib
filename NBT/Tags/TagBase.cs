@@ -12,14 +12,14 @@ namespace MCLib.NBT.Tags
 
         public string Name { get; private set; }
 
-        private TagId? _id;
+        private Enums.Tag? _id;
 
-        public TagId Id
+        public Enums.Tag Id
         {
-            get { return (TagId)(_id ?? (_id = GetType().GetCustomAttributes(false).OfType<TagIdAttribute>().Single().Id)); }
+            get { return (Enums.Tag)(_id ?? (_id = GetType().GetCustomAttributes(false).OfType<TagIdAttribute>().Single().Id)); }
         }
 
-        private static readonly Dictionary<TagId, Func<TagBase>> TagList;
+        private static readonly Dictionary<Enums.Tag, Func<TagBase>> TagList;
 
         #endregion
 
@@ -64,7 +64,7 @@ namespace MCLib.NBT.Tags
                     t => (Func<TagBase>)(() => (TagBase)Activator.CreateInstance(t)));
         }
 
-        public static TagBase TagFromId(TagId id)
+        public static TagBase TagFromId(Enums.Tag id)
         {
             if (!TagList.ContainsKey(id))
             {
@@ -97,6 +97,7 @@ namespace MCLib.NBT.Tags
         TagBase this[T idx]
         {
             get { return Tags[idx]; }
+            set { Tags[idx] = value; }
         }
 
         private Dictionary<T, TagBase> _tags;
@@ -124,26 +125,13 @@ namespace MCLib.NBT.Tags
     [AttributeUsage(AttributeTargets.Class)]
     public class TagIdAttribute : Attribute
     {
-        public TagId Id { get; private set; }
+        public Enums.Tag Id { get; private set; }
 
-        public TagIdAttribute(TagId id)
+        public TagIdAttribute(Enums.Tag id)
         {
             Id = id;
         }
     }
 
-    public enum TagId
-    {
-        End = 0x00,
-        Byte = 0x01,
-        Short = 0x02,
-        Int = 0x03,
-        Long = 0x04,
-        Float = 0x05,
-        Double = 0x06,
-        ByteArray = 0x07,
-        String = 0x08,
-        List = 0x09,
-        Compound = 0x0A
-    }
+    
 }

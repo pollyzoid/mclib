@@ -2,16 +2,16 @@
 
 namespace MCLib.NBT.Tags
 {
-    [TagId(TagId.List)]
+    [TagId(Enums.Tag.List)]
     public class List : TagListBase<int>
     {
-        public TagId Type { get; set; }
+        public Enums.Tag Type { get; set; }
 
         #region Overrides of TagBase
 
         protected override void ReadData(BinaryReaderMC stream)
         {
-            Type = (TagId)stream.ReadByte();
+            Type = (Enums.Tag)stream.ReadByte();
             var len = stream.ReadInt32();
 
             Tags.Clear();

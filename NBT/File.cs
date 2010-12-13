@@ -87,7 +87,7 @@ namespace MCLib.NBT
 
             var bstream = new BinaryReaderMC(stream);
 
-            if ((TagId) bstream.ReadByte() != TagId.Compound) return;
+            if ((Enums.Tag) bstream.ReadByte() != Enums.Tag.Compound) return;
 
             Root = new Compound();
             Root.Read(bstream);
@@ -97,7 +97,7 @@ namespace MCLib.NBT
         {
             var bstream = new BinaryWriterMC(stream);
 
-            bstream.Write((byte)TagId.Compound);
+            bstream.Write((byte)Enums.Tag.Compound);
 
             Root.Write(bstream);
         }

@@ -1,6 +1,6 @@
 ﻿namespace MCLib.NBT.Tags
 {
-    [TagId(TagId.Byte)]
+    [TagId(Enums.Tag.Byte)]
     public class Byte : TagValueBase<byte>
     {
         #region Overrides of TagBase
@@ -18,7 +18,7 @@
         #endregion
     }
 
-    [TagId(TagId.Short)]
+    [TagId(Enums.Tag.Short)]
     public class Short : TagValueBase<short>
     {
         #region Overrides of TagBase
@@ -36,7 +36,7 @@
         #endregion
     }
 
-    [TagId(TagId.Int)]
+    [TagId(Enums.Tag.Int)]
     public class Int : TagValueBase<int>
     {
         #region Overrides of TagBase
@@ -54,7 +54,7 @@
         #endregion
     }
 
-    [TagId(TagId.Long)]
+    [TagId(Enums.Tag.Long)]
     public class Long : TagValueBase<long>
     {
         #region Overrides of TagBase
@@ -72,7 +72,7 @@
         #endregion
     }
 
-    [TagId(TagId.Float)]
+    [TagId(Enums.Tag.Float)]
     public class Float : TagValueBase<float>
     {
         #region Overrides of TagBase
@@ -90,7 +90,7 @@
         #endregion
     }
 
-    [TagId(TagId.Double)]
+    [TagId(Enums.Tag.Double)]
     public class Double : TagValueBase<double>
     {
         #region Overrides of TagBase
@@ -108,7 +108,7 @@
         #endregion
     }
 
-    [TagId(TagId.ByteArray)]
+    [TagId(Enums.Tag.ByteArray)]
     public class ByteArray : TagValueBase<byte[]>
     {
         #region Overrides of TagBase
@@ -132,7 +132,7 @@
         }
     }
 
-    [TagId(TagId.String)]
+    [TagId(Enums.Tag.String)]
     public class String : TagValueBase<string>
     {
         #region Overrides of TagBase
