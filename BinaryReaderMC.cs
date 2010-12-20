@@ -6,6 +6,9 @@ using System.Text;
 
 namespace MCLib
 {
+    /// <summary>
+    /// BinaryReader that automatically converts to little endian if necessary
+    /// </summary>
     public class BinaryReaderMC : BinaryReader
     {
         #region Constructor

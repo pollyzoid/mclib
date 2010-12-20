@@ -1,5 +1,8 @@
 ﻿namespace MCLib.Enums
 {
+    /// <summary>
+    /// Client-to-server packets
+    /// </summary>
     public enum ClientPacket : byte
     {
         KeepAlive = 0x00,
@@ -21,6 +24,9 @@
         Disconnect = 0xFF
     }
 
+    /// <summary>
+    /// Server-to-client packets
+    /// </summary>
     public enum ServerPacket : byte
     {
         KeepAlive = 0x00,

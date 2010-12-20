@@ -51,6 +51,7 @@
     <Compile Include="NBT\Tags\List.cs" />
     <Compile Include="NBT\Tags\Simple.cs" />
     <Compile Include="NBT\Tags\TagBase.cs" />
+    <Compile Include="NetworkStreamMC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

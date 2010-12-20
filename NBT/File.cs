@@ -9,7 +9,14 @@ namespace MCLib.NBT
     {
         #region Fields
 
+        /// <summary>
+        /// Path of the file
+        /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// Root tag for the file
+        /// </summary>
         public Compound Root { get; private set; }
 
         #endregion
@@ -27,17 +34,16 @@ namespace MCLib.NBT
 
         public void Load()
         {
-            Load(Path);
-        }
-
-        public void Load(string path)
-        {
-            using(var file = IOFile.OpenRead(path))
+            using(var file = IOFile.OpenRead(Path))
             {
                 Load(file);
             }
         }
 
+        /// <summary>
+        /// Load from given stream
+        /// </summary>
+        /// <param name="stream">Stream to load from</param>
         public void Load(Stream stream)
         {
             using (var decStream = new GZipStream(stream, CompressionMode.Decompress))
@@ -58,17 +64,16 @@ namespace MCLib.NBT
 
         public void Save()
         {
-            Save(Path);
-        }
-
-        public void Save(string path)
-        {
-            using(var file = IOFile.OpenWrite(path))
+            using (var file = IOFile.OpenWrite(Path))
             {
                 Save(file);
             }
         }
 
+        /// <summary>
+        /// Saves into stream
+        /// </summary>
+        /// <param name="stream">stream to save into</param>
         public void Save(Stream stream)
         {
             using (var comStream = new GZipStream(stream, CompressionMode.Compress))
