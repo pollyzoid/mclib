@@ -1,44 +1,25 @@
 ﻿namespace MCLib.Enums
 {
-    /// <summary>
-    /// Client-to-server packets
-    /// </summary>
-    public enum ClientPacket : byte
+    public enum Packet : byte
     {
-        KeepAlive = 0x00,
-        LoginRequest = 0x01,
-        Handshake = 0x02,
-        ChatMessage = 0x03,
-        PlayerInventory = 0x05,
-        UseEntity = 0x07,
-        Respawn = 0x09,
-        Player = 0x0A,
-        PlayerPosition = 0x0B,
-        PlayerLook = 0x0C,
-        PlayerPositionLook = 0x0D,
-        PlayerDigging = 0x0E,
-        PlayerBlockPlace = 0x0F,
-        HoldingChange = 0x10,
-        ArmAnimation = 0x12,
-        PickupSpawn = 0x15,
-        Disconnect = 0xFF
-    }
+        // C-s = Client-to-server only
 
-    /// <summary>
-    /// Server-to-client packets
-    /// </summary>
-    public enum ServerPacket : byte
-    {
         KeepAlive = 0x00,
-        LoginResponse = 0x01,
+        Login = 0x01,
         Handshake = 0x02,
         ChatMessage = 0x03,
         TimeUpdate = 0x04,
         PlayerInventory = 0x05,
         SpawnPosition = 0x06,
+        UseEntity = 0x07,           //C-s
         UpdateHealth = 0x08,
         Respawn = 0x09,
+        Player = 0x0A,              //C-s
+        PlayerPosition = 0x0B,      //C-s
+        PlayerLook = 0x0C,          //C-s
         PlayerPositionLook = 0x0D,
+        PlayerDigging = 0x0E,       //C-s
+        PlayerBlockPlace = 0x0F,    //C-s
         HoldingChange = 0x10,
         AddToInventory = 0x11,
         Animation = 0x12,
@@ -62,6 +43,6 @@
         BlockChange = 0x35,
         ComplexEntities = 0x3B,
         Explosion = 0x3C,
-        Kick = 0xFF
+        Disconnect = 0xFF
     }
 }
