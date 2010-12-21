@@ -45,4 +45,20 @@
         Explosion = 0x3C,
         Disconnect = 0xFF
     }
+
+    public enum PacketSide
+    {
+        /// <summary>
+        /// Packet has same protocol on both server and client
+        /// </summary>
+        Shared,
+        /// <summary>
+        /// Packet is client-to-server only
+        /// </summary>
+        Client,
+        /// <summary>
+        /// Packet is server-to-client only
+        /// </summary>
+        Server
+    }
 }
