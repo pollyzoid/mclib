@@ -25,12 +25,7 @@ namespace MCLib
 
         #region Reading
 
-        public byte ReadByte()
-        {
-            return (byte)_stream.ReadByte();
-        }
-
-        public byte[] ReadBytes(int count)
+        public byte[] Bytes(int count)
         {
             var buff = new byte[count];
             int recv = 0;
@@ -39,35 +34,45 @@ namespace MCLib
 
             return buff;
         }
-
-        public short ReadInt16()
+        
+        public byte Byte()
         {
-            return BitConverter.ToInt16(SwapEndian(ReadBytes(2)), 0);
+            return (byte)_stream.ReadByte();
         }
 
-        public int ReadInt32()
+        public bool Boolean()
         {
-            return BitConverter.ToInt32(SwapEndian(ReadBytes(4)), 0);
+            return Byte() != 0;
         }
 
-        public long ReadInt64()
+        public short Int16()
         {
-            return BitConverter.ToInt64(SwapEndian(ReadBytes(8)), 0);
+            return BitConverter.ToInt16(SwapEndian(Bytes(2)), 0);
         }
 
-        public float ReadSingle()
+        public int Int32()
         {
-            return BitConverter.ToSingle(SwapEndian(ReadBytes(4)), 0);
+            return BitConverter.ToInt32(SwapEndian(Bytes(4)), 0);
         }
 
-        public double ReadDouble()
+        public long Int64()
         {
-            return BitConverter.ToDouble(SwapEndian(ReadBytes(8)), 0);
+            return BitConverter.ToInt64(SwapEndian(Bytes(8)), 0);
         }
 
-        public string ReadString()
+        public float Single()
         {
-            return Encoding.UTF8.GetString(ReadBytes(ReadInt16()));
+            return BitConverter.ToSingle(SwapEndian(Bytes(4)), 0);
+        }
+
+        public double Double()
+        {
+            return BitConverter.ToDouble(SwapEndian(Bytes(8)), 0);
+        }
+
+        public string String()
+        {
+            return Encoding.UTF8.GetString(Bytes(Int16()));
         }
 
         #endregion
@@ -76,6 +81,7 @@ namespace MCLib
 
         public void Write(byte[] buffer, int offset, int size)
         {
+            //Console.WriteLine("Wrote {0} bytes.", buffer.Count());
             _stream.Write(buffer, offset, size);
         }
 
