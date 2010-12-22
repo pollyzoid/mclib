@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using MCLib.Enums;
 using MCLib.Networking.Packets;
@@ -43,6 +44,19 @@ namespace MCLib.Networking
 
                     foreach (var packet in _recvPackets)
                         FirePacket(packet);
+                }
+            }
+        }
+
+        private bool _isActive = true;
+        public bool IsActive
+        {
+            get { return _isActive; }
+            private set
+            {
+                lock (_locker)
+                {
+                    _isActive = value;
                 }
             }
         }
@@ -156,29 +170,34 @@ namespace MCLib.Networking
         {
             int numPackets = 0;
 
-            while (true)
+            while (IsActive)
             {
                 byte id = _stream.Byte();
+                Console.WriteLine("0x{0:X2}", id);
                 numPackets++;
 
                 // If we're on client mode, we need to get the server-version of the packet,
                 // because that's the packet sent by the server
-                var packet = PacketBase.TagFromId((Packet) id, Mode == HandlerMode.Client ? HandlerMode.Server : HandlerMode.Client);
+                var packet = PacketBase.TagFromId((Packet)id, Mode == HandlerMode.Client ? HandlerMode.Server : HandlerMode.Client);
 
                 packet.Read(_stream);
 
-                Monitor.Enter(_locker);
-
                 if (EventMode)
                 {
-                    Monitor.Exit(_locker);
                     FirePacket(packet);
                 }
                 else
                 {
-                    _recvPackets.Enqueue(packet);
-                    _waitForPacket.Set();
-                    Monitor.Exit(_locker);
+                    lock(_locker)
+                    {
+                        _recvPackets.Enqueue(packet);
+                        _waitForPacket.Set();
+                    }
+                }
+
+                if (packet is Disconnect)
+                {
+                    IsActive = false;
                 }
 
                 if (numPackets > 50)
@@ -186,6 +205,8 @@ namespace MCLib.Networking
                     new KeepAlive().Send(_stream);
                 }
             }
+
+            _packetHandler.Abort();
         }
 
         #endregion

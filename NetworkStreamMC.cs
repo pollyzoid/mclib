@@ -81,7 +81,6 @@ namespace MCLib
 
         public void Write(byte[] buffer, int offset, int size)
         {
-            //Console.WriteLine("Wrote {0} bytes.", buffer.Count());
             _stream.Write(buffer, offset, size);
         }
 

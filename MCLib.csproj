@@ -51,6 +51,10 @@
     <Compile Include="NBT\Tags\List.cs" />
     <Compile Include="NBT\Tags\Simple.cs" />
     <Compile Include="NBT\Tags\TagBase.cs" />
+    <Compile Include="Networking\PacketHandler.cs" />
+    <Compile Include="Networking\Packets\PacketBase.cs" />
+    <Compile Include="Networking\Packets\Packets.cs" />
+    <Compile Include="Networking\PacketWriter.cs" />
     <Compile Include="NetworkStreamMC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

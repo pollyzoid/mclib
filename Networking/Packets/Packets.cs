@@ -668,6 +668,6 @@ namespace MCLib.Networking.Packets
     [Packet(Id = Packet.Disconnect)]
     public class Disconnect : PacketBase
     {
-        public string Reason;
+        public string Reason { get; set; }
     }
 }
