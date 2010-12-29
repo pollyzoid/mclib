@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using MCLib.Enums;
 using MCLib.Networking.Packets;
@@ -91,16 +90,18 @@ namespace MCLib.Networking
 
         #region Constructor
 
-        public PacketHandler(IPEndPoint ip, HandlerMode mode)
+        public PacketHandler(string host, int port, HandlerMode mode)
         {
             Mode = mode;
 
-            _tcp.Connect(ip);
+            _tcp = new TcpClient(host, port);
+            
             _stream = new NetworkStreamMC(_tcp.GetStream());
 
             _packetHandler = new Thread(Worker)
                                  {
-                                     Name = "SC#PacketHandler"
+                                     Name = "SC#PacketHandler",
+                                     IsBackground = true
                                  };
 
             _packetHandler.Start();
@@ -146,6 +147,11 @@ namespace MCLib.Networking
             packet.Send(_stream);
         }
 
+        public void Disconnect()
+        {
+            IsActive = false;
+        }
+
         #endregion
 
         #region Private methods
@@ -173,7 +179,6 @@ namespace MCLib.Networking
             while (IsActive)
             {
                 byte id = _stream.Byte();
-                Console.WriteLine("0x{0:X2}", id);
                 numPackets++;
 
                 // If we're on client mode, we need to get the server-version of the packet,
@@ -181,6 +186,9 @@ namespace MCLib.Networking
                 var packet = PacketBase.TagFromId((Packet)id, Mode == HandlerMode.Client ? HandlerMode.Server : HandlerMode.Client);
 
                 packet.Read(_stream);
+
+                if (packet is KeepAlive)
+                    continue;
 
                 if (EventMode)
                 {
@@ -197,7 +205,7 @@ namespace MCLib.Networking
 
                 if (packet is Disconnect)
                 {
-                    IsActive = false;
+                    Disconnect();
                 }
 
                 if (numPackets > 50)
@@ -206,7 +214,7 @@ namespace MCLib.Networking
                 }
             }
 
-            _packetHandler.Abort();
+            _packetHandler.Join();
         }
 
         #endregion

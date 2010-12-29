@@ -10,7 +10,7 @@ namespace MCLib.Networking.Packets
     public class LoginRequest : PacketBase
     {
         /// <summary>
-        /// Network protocol version, latest is 7
+        /// Network protocol version, latest is 8
         /// </summary>
         public int Protocol { get; set; }
 
@@ -28,9 +28,6 @@ namespace MCLib.Networking.Packets
     [Packet(Id = Packet.Login, Side = PacketSide.Server)]
     public class LoginResponse : PacketBase
     {
-        /// <summary>
-        /// Player's entity
-        /// </summary>
         public int EntityId { get; set; }
 
         public string ServerNameMaybe { get; set; }
@@ -64,52 +61,12 @@ namespace MCLib.Networking.Packets
         public long Time { get; set; }
     }
 
-    [Packet(Id = Packet.PlayerInventory)]
-    public class PlayerInventory : PacketBase
+    [Packet(Id = Packet.EntityEquipment)]
+    public class EntityEquipment : PacketBase
     {
-        public int Type { get; set; }
-        public short Count { get; set; }
-        public Item[] Items { get; set; }
-
-        public override void Read(NetworkStreamMC stream)
-        {
-            Type = stream.Int32();
-            Count = stream.Int16();
-
-            Items = new Item[Count];
-
-            for (int i = 0; i < Count; ++i)
-            {
-                var id = (Enums.Item)stream.Int16();
-                if (id == Enums.Item.Invalid)
-                    Items[i] = new Item {Id = id, Count = 0, Health = 0};
-                else
-                    Items[i] = new Item {Id = id, Count = stream.Byte(), Health = stream.Int16()};
-            }
-        }
-
-        protected override void Write(PacketWriter writer)
-        {
-            writer.Add(Type);
-            writer.Add(Count);
-
-            foreach(var item in Items)
-            {
-                writer.Add((short) item.Id);
-
-                if (item.Id == Enums.Item.Invalid) continue;
-
-                writer.Add(item.Count);
-                writer.Add(item.Health);
-            }
-        }
-
-        public class Item
-        {
-            public Enums.Item Id { get; set; }
-            public byte Count { get; set; }
-            public short Health { get; set; }
-        }
+        public int Entity { get; set; }
+        public short Slot { get; set; }
+        public short ItemId { get; set; }
     }
 
     [Packet(Id = Packet.SpawnPosition)]
@@ -208,18 +165,49 @@ namespace MCLib.Networking.Packets
     [Packet(Id = Packet.PlayerBlockPlace)]
     public class PlayerBlockPlace : PacketBase
     {
-        public short ItemId { get; set; }
         public int X { get; set; }
         public byte Y { get; set; }
         public int Z { get; set; }
 
         public byte Direction { get; set; }
+
+        public short ItemId { get; set; }
+        public byte ItemAmount { get; set; }
+        public byte ItemHealth { get; set; }
+
+        public override void Read(NetworkStreamMC stream)
+        {
+            X = stream.Int32();
+            Y = stream.Byte();
+            Z = stream.Int32();
+
+            Direction = stream.Byte();
+
+            ItemId = stream.Int16();
+
+            if (ItemId == -1) return;
+            ItemAmount = stream.Byte();
+            ItemHealth = stream.Byte();
+        }
+
+        protected override void Write(PacketWriter writer)
+        {
+            writer.Add(X);
+            writer.Add(Y);
+            writer.Add(Z);
+            writer.Add(Direction);
+            writer.Add(ItemId);
+
+            if (ItemId == -1) return;
+            writer.Add(ItemAmount);
+            writer.Add(ItemHealth);
+        }
     }
 
     [Packet(Id = Packet.HoldingChange)]
     public class HoldingChange : PacketBase
     {
-        public short ItemId { get; set; }
+        public short SlotId { get; set; }
     }
 
     [Packet(Id = Packet.Animation)]
@@ -636,7 +624,7 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.Unknown1)]
+    [Packet(Id = Packet.UpdateProgressBar)]
     public class Unknown1 : PacketBase
     {
         public byte Dunno1 { get; set; }
@@ -644,7 +632,7 @@ namespace MCLib.Networking.Packets
         public short Dunno3 { get; set; }
     }
 
-    [Packet(Id = Packet.Unknown2)]
+    [Packet(Id = Packet.Transaction)]
     public class Unknown2 : PacketBase
     {
         public byte Dunno1 { get; set; }

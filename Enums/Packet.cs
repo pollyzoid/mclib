@@ -9,7 +9,7 @@
         Handshake = 0x02,
         ChatMessage = 0x03,
         TimeUpdate = 0x04,
-        PlayerInventory = 0x05,
+        EntityEquipment = 0x05,
         SpawnPosition = 0x06,
         UseEntity = 0x07,           //C-s
         UpdateHealth = 0x08,
@@ -50,8 +50,8 @@
         InventoryClick = 0x66,
         InventoryUpdate = 0x67,
         InventoryFullUpdate = 0x68,
-        Unknown1 = 0x69,
-        Unknown2 = 0x6A,
+        UpdateProgressBar = 0x69,
+        Transaction = 0x6A,
         SignUpdate = 0x82,
 
         Disconnect = 0xFF

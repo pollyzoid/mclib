@@ -26,7 +26,7 @@ namespace MCLib.Networking.Packets
 
         public virtual void Read(NetworkStreamMC stream)
         {
-            foreach (var p in GetType().GetProperties().Where(p => typeof (PacketBase).GetProperty(p.Name) == null))
+            foreach (var p in GetType().GetProperties().OrderBy(p => p.MetadataToken).Where(p => typeof(PacketBase).GetProperty(p.Name) == null))
             {
                 p.SetValue(this, stream.GetType().InvokeMember(p.PropertyType.Name, BindingFlags.InvokeMethod, null, stream, null), null);
             }
@@ -34,7 +34,7 @@ namespace MCLib.Networking.Packets
 
         protected virtual void Write(PacketWriter writer)
         {
-            foreach (var p in GetType().GetProperties().Where(p => typeof(PacketBase).GetProperty(p.Name) == null))
+            foreach (var p in GetType().GetProperties().OrderBy(p => p.MetadataToken).Where(p => typeof(PacketBase).GetProperty(p.Name) == null))
             {
                 writer.GetType().InvokeMember("Add", BindingFlags.InvokeMethod, null, writer, new[] { p.GetValue(this, null) });
             }
