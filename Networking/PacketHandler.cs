@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using MCLib.Enums;
@@ -144,6 +143,8 @@ namespace MCLib.Networking
 
         public void SendPacket(PacketBase packet)
         {
+            if (!IsActive) return;
+
             packet.Send(_stream);
         }
 
@@ -187,9 +188,6 @@ namespace MCLib.Networking
 
                 packet.Read(_stream);
 
-                if (packet is KeepAlive)
-                    continue;
-
                 if (EventMode)
                 {
                     FirePacket(packet);
@@ -203,14 +201,9 @@ namespace MCLib.Networking
                     }
                 }
 
-                if (packet is Disconnect)
-                {
-                    Disconnect();
-                }
-
                 if (numPackets > 50)
                 {
-                    new KeepAlive().Send(_stream);
+                    SendPacket(new KeepAlive());
                 }
             }
 

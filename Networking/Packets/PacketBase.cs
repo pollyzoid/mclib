@@ -14,7 +14,7 @@ namespace MCLib.Networking.Packets
 
         public Packet Id
         {
-            get { return (Packet)(_id ?? (_id = GetType().GetCustomAttributes(false).OfType<PacketAttribute>().Single().Id)); }
+            get { return (Packet)(_id ?? (_id = GetType().GetCustomAttributes(false).OfType<PacketAttribute>().Single().ID)); }
         }
 
         private static readonly Dictionary<Packet, Func<PacketBase>> ClientPackets;
@@ -60,7 +60,7 @@ namespace MCLib.Networking.Packets
                              ||
                              t.GetCustomAttributes(false).OfType<PacketAttribute>().Single().Side == PacketSide.Client))
                 .ToDictionary(
-                    t => t.GetCustomAttributes(false).OfType<PacketAttribute>().Single().Id,
+                    t => t.GetCustomAttributes(false).OfType<PacketAttribute>().Single().ID,
                     t => (Func<PacketBase>) (() => (PacketBase) Activator.CreateInstance(t)));
 
             ServerPackets = Assembly.GetExecutingAssembly().GetExportedTypes()
@@ -70,7 +70,7 @@ namespace MCLib.Networking.Packets
                              ||
                              t.GetCustomAttributes(false).OfType<PacketAttribute>().Single().Side == PacketSide.Server))
                 .ToDictionary(
-                    t => t.GetCustomAttributes(false).OfType<PacketAttribute>().Single().Id,
+                    t => t.GetCustomAttributes(false).OfType<PacketAttribute>().Single().ID,
                     t => (Func<PacketBase>) (() => (PacketBase) Activator.CreateInstance(t)));
         }
 
@@ -100,7 +100,7 @@ namespace MCLib.Networking.Packets
     [AttributeUsage(AttributeTargets.Class)]
     public class PacketAttribute : Attribute
     {
-        public Packet Id;
+        public Packet ID;
         public PacketSide Side = PacketSide.Shared;
     }
 }

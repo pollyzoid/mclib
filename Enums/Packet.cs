@@ -14,7 +14,7 @@
         UseEntity = 0x07,           //C-s
         UpdateHealth = 0x08,
         Respawn = 0x09,
-        PlayerFlying = 0x0A,              //C-s
+        PlayerFlying = 0x0A,        //C-s
         PlayerPosition = 0x0B,      //C-s
         PlayerLook = 0x0C,          //C-s
         PlayerPositionLook = 0x0D,

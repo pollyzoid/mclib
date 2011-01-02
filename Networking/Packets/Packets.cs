@@ -2,16 +2,23 @@
 
 namespace MCLib.Networking.Packets
 {
-    [Packet(Id = Packet.KeepAlive)]
+    /// <summary>
+    /// Sent to both clients and server to test the connection.
+    /// Disconnect after 1200 ticks in Minecraft.
+    /// <para>Packet ID 0x00</para>
+    /// </summary>
+    [Packet(ID = Packet.KeepAlive)]
     public class KeepAlive : PacketBase
     {}
 
-    [Packet(Id = Packet.Login, Side = PacketSide.Client)]
+    /// <summary>
+    /// Sent by client to server.
+    /// If server accepts, <see cref="LoginResponse"/> is sent, otherwise <see cref="Disconnect"/>.
+    /// <para>Packet ID 0x01</para>
+    /// </summary>
+    [Packet(ID = Packet.Login, Side = PacketSide.Client)]
     public class LoginRequest : PacketBase
     {
-        /// <summary>
-        /// Network protocol version, latest is 8
-        /// </summary>
         public int Protocol { get; set; }
 
         public string Username { get; set; }
@@ -21,11 +28,15 @@ namespace MCLib.Networking.Packets
         /// </summary>
         public string Password { get; set; }
 
-        public long Seed { get; set; }
+        public long MapSeed { get; set; }
         public byte Dimension { get; set; }
     }
 
-    [Packet(Id = Packet.Login, Side = PacketSide.Server)]
+    /// <summary>
+    /// Sent by server to client if <see cref="LoginRequest"/> was accepted.
+    /// <para>Packet ID 0x01</para>
+    /// </summary>
+    [Packet(ID = Packet.Login, Side = PacketSide.Server)]
     public class LoginResponse : PacketBase
     {
         public int EntityId { get; set; }
@@ -37,31 +48,59 @@ namespace MCLib.Networking.Packets
         public byte Dimension { get; set; }
     }
 
-    [Packet(Id = Packet.Handshake, Side = PacketSide.Client)]
+    /// <summary>
+    /// Sent by client to server. Used for authentication.
+    /// <para>Packet ID 0x02</para>
+    /// </summary>
+    [Packet(ID = Packet.Handshake, Side = PacketSide.Client)]
     public class Handshake : PacketBase
     {
         public string Username { get; set; }
     }
 
-    [Packet(Id = Packet.Handshake, Side = PacketSide.Server)]
+    /// <summary>
+    /// Sent by server to client. Used for authentication.
+    /// <para>Packet ID 0x02</para>
+    /// </summary>
+    [Packet(ID = Packet.Handshake, Side = PacketSide.Server)]
     public class HandshakeResponse : PacketBase
     {
         public string ConnectionHash { get; set; }
     }
 
-    [Packet(Id = Packet.ChatMessage)]
+    /// <summary>
+    /// Message from server to clients or vice-versa.
+    /// Maximum length 103 bytes when sent by client.
+    /// <para>Packet ID 0x03</para>
+    /// </summary>
+    [Packet(ID = Packet.ChatMessage)]
     public class ChatMessage : PacketBase
     {
+        /// <remarks>
+        /// Server kicks if over 100 characters
+        /// </remarks>
         public string Message { get; set; }
     }
 
-    [Packet(Id = Packet.TimeUpdate)]
+    /// <summary>
+    /// Time of the day
+    /// <para>Packet ID 0x04</para>
+    /// </summary>
+    [Packet(ID = Packet.TimeUpdate)]
     public class TimeUpdate : PacketBase
     {
+        /// <summary>
+        /// World time in minutes, range 0-24000,
+        /// incremented by 20 every second.
+        /// </summary>
         public long Time { get; set; }
     }
 
-    [Packet(Id = Packet.EntityEquipment)]
+    /// <summary>
+    /// Equipped item and armor of a player
+    /// <para>Packet ID 0x05</para>
+    /// </summary>
+    [Packet(ID = Packet.EntityEquipment)]
     public class EntityEquipment : PacketBase
     {
         public int Entity { get; set; }
@@ -69,7 +108,12 @@ namespace MCLib.Networking.Packets
         public short ItemId { get; set; }
     }
 
-    [Packet(Id = Packet.SpawnPosition)]
+    /// <summary>
+    /// Sent by server after login to specify spawn location
+    /// and to initialize compasses.
+    /// <para>Packet ID 0x06</para>
+    /// </summary>
+    [Packet(ID = Packet.SpawnPosition)]
     public class SpawnPosition : PacketBase
     {
         public int X { get; set; }
@@ -77,7 +121,11 @@ namespace MCLib.Networking.Packets
         public int Z { get; set; }
     }
 
-    [Packet(Id = Packet.UseEntity)]
+    /// <summary>
+    /// Sent by client when an entity is used.
+    /// <para>Packet ID 0x07</para>
+    /// </summary>
+    [Packet(ID = Packet.UseEntity)]
     public class UseEntity : PacketBase
     {
         public int User { get; set; }
@@ -85,35 +133,70 @@ namespace MCLib.Networking.Packets
         public bool LeftClick { get; set; }
     }
 
-    [Packet(Id = Packet.UpdateHealth)]
+    /// <summary>
+    /// Sent by server to update a client's health
+    /// <para>Packet ID 0x08</para>
+    /// </summary>
+    [Packet(ID = Packet.UpdateHealth)]
     public class UpdateHealth : PacketBase
     {
+        /// <summary>
+        /// Ranges from 0 (dead) to 20 (full health)
+        /// </summary>
         public short Health { get; set; }
     }
 
-    [Packet(Id = Packet.Respawn)]
+    /// <summary>
+    /// Sent by the client when the player presses the "Respawn" button after dying.
+    /// The client will not leave the respawn screen until it receives a respawn packet.
+    /// <para>Packet ID 0x09</para>
+    /// </summary>
+    /// <remarks>
+    /// After receiving, server drops the player's inventory, teleports the user to the spawn point,
+    /// and sends a respawn packet in response.
+    /// </remarks>
+    [Packet(ID = Packet.Respawn)]
     public class Respawn : PacketBase
     {
     }
 
-    [Packet(Id = Packet.PlayerFlying)]
+    /// <summary>
+    /// Sent by the client each tick.
+    /// <para>Packet ID 0x0A</para>
+    /// </summary>
+    [Packet(ID = Packet.PlayerFlying)]
     public class PlayerFlying : PacketBase
     {
         public bool OnGround { get; set; }
     }
 
-    [Packet(Id = Packet.PlayerPosition)]
+    /// <summary>
+    /// Updates the players XYZ position on the server.
+    /// <para>Packet ID 0x0B</para>
+    /// </summary>
+    [Packet(ID = Packet.PlayerPosition)]
     public class PlayerPosition : PacketBase
     {
         public double X { get; set; }
+        public double FootHeight { get; set; }
         public double Y { get; set; }
-        public double Stance { get; set; }
         public double Z { get; set; }
 
         public bool OnGround { get; set; }
     }
 
-    [Packet(Id = Packet.PlayerLook)]
+    /// <summary>
+    /// Updates the direction the player is looking at.
+    /// <para>Packet ID 0x0C</para>
+    /// </summary>
+    /// <remarks>
+    /// Yaw is measured in degrees, and does not follow classical trigonometry rules.
+    /// The unit circle of yaw on the xz-plane starts at (0, 1) and turns backwards towards (-1, 0),
+    /// or in other words, it turns clockwise instead of counterclockwise.
+    /// Additionally, yaw is not clamped to between 0 and 360 degrees;
+    /// any number is valid, including negative numbers and numbers greater than 360.
+    /// </remarks>
+    [Packet(ID = Packet.PlayerLook)]
     public class PlayerLook : PacketBase
     {
         public float Yaw { get; set; }
@@ -122,12 +205,16 @@ namespace MCLib.Networking.Packets
         public bool OnGround { get; set; }
     }
 
-    [Packet(Id = Packet.PlayerPositionLook, Side = PacketSide.Client)]
+    /// <summary>
+    /// Combination of <see cref="PlayerPosition"/> and <see cref="PlayerLook"/>
+    /// <para>Packet ID 0x0D</para>
+    /// </summary>
+    [Packet(ID = Packet.PlayerPositionLook, Side = PacketSide.Client)]
     public class PlayerPositionLook : PacketBase
     {
         public double X { get; set; }
         public double Y { get; set; }
-        public double Stance { get; set; }
+        public double FootHeight { get; set; }
         public double Z { get; set; }
 
         public float Yaw { get; set; }
@@ -136,12 +223,16 @@ namespace MCLib.Networking.Packets
         public bool OnGround { get; set; }
     }
 
-    // Goddamnit Notch
-    [Packet(Id = Packet.PlayerPositionLook, Side = PacketSide.Server)]
+    /// <summary>
+    /// Combination of <see cref="PlayerPosition"/> and <see cref="PlayerLook"/>
+    /// Otherwise same as client's version, but FootHeight and Y are switched.
+    /// <para>Packet ID 0x0D</para>
+    /// </summary>
+    [Packet(ID = Packet.PlayerPositionLook, Side = PacketSide.Server)]
     public class PlayerPositionLookServer : PacketBase
     {
         public double X { get; set; }
-        public double Stance { get; set; }
+        public double FootHeight { get; set; }
         public double Y { get; set; }
         public double Z { get; set; }
 
@@ -151,7 +242,11 @@ namespace MCLib.Networking.Packets
         public bool OnGround { get; set; }
     }
 
-    [Packet(Id = Packet.PlayerDigging)]
+    /// <summary>
+    /// Sent repeatedly by the client as the player mines a block.
+    /// <para>Packet ID 0x0E</para>
+    /// </summary>
+    [Packet(ID = Packet.PlayerDigging)]
     public class PlayerDigging : PacketBase
     {
         public byte Status { get; set; }
@@ -162,7 +257,11 @@ namespace MCLib.Networking.Packets
         public byte Face { get; set; }
     }
 
-    [Packet(Id = Packet.PlayerBlockPlace)]
+    /// <summary>
+    /// Sent by the client when a block or an item is placed.
+    /// <para>Packet ID 0x0F</para>
+    /// </summary>
+    [Packet(ID = Packet.PlayerBlockPlace)]
     public class PlayerBlockPlace : PacketBase
     {
         public int X { get; set; }
@@ -204,20 +303,32 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.HoldingChange)]
+    /// <summary>
+    /// Sent by the client when the slot selection is changed.
+    /// <para>Packet ID 0x10</para>
+    /// </summary>
+    [Packet(ID = Packet.HoldingChange)]
     public class HoldingChange : PacketBase
     {
         public short SlotId { get; set; }
     }
 
-    [Packet(Id = Packet.Animation)]
+    /// <summary>
+    /// Sent whenever an entity should change animation.
+    /// <para>Packet ID 0x12</para>
+    /// </summary>
+    [Packet(ID = Packet.Animation)]
     public class Animation : PacketBase
     {
-        public int Player { get; set; }
+        public int EntityID { get; set; }
         public byte Stage { get; set; }
     }
 
-    [Packet(Id = Packet.NamedEntitySpawn)]
+    /// <summary>
+    /// Sent by the server when a player comes into visible range.
+    /// <para>Packet ID 0x14</para>
+    /// </summary>
+    [Packet(ID = Packet.NamedEntitySpawn)]
     public class NamedEntitySpawn : PacketBase
     {
         public int Player { get; set; }
@@ -231,10 +342,16 @@ namespace MCLib.Networking.Packets
         public short CurrentItem { get; set; }
     }
 
-    [Packet(Id = Packet.PickupSpawn)]
+    /// <summary>
+    /// Sent by the server when an item on the ground comes into visible range.
+    /// Client sends this when an item is dropped from a tile or inventory.
+    /// <para>Packet ID 0x15</para>
+    /// </summary>
+    [Packet(ID = Packet.PickupSpawn)]
     public class PickupSpawn : PacketBase
     {
         public int Entity { get; set; }
+
         public short Item { get; set; }
         public byte Count { get; set; }
         public int X { get; set; }
@@ -245,14 +362,18 @@ namespace MCLib.Networking.Packets
         public byte Roll { get; set; }
     }
 
-    [Packet(Id = Packet.CollectItem)]
+    /// <summary>
+    /// Sent by the server when someone picks up an item from ground.
+    /// <para>Packet ID 0x16</para>
+    /// </summary>
+    [Packet(ID = Packet.CollectItem)]
     public class CollectItem : PacketBase
     {
         public int Collected { get; set; }
         public int Collector { get; set; }
     }
 
-    [Packet(Id = Packet.AddObject)]
+    [Packet(ID = Packet.AddObject)]
     public class AddObject : PacketBase
     {
         public int Entity { get; set; }
@@ -262,7 +383,7 @@ namespace MCLib.Networking.Packets
         public int Z { get; set; }
     }
 
-    [Packet(Id = Packet.MobSpawn)]
+    [Packet(ID = Packet.MobSpawn)]
     public class MobSpawn : PacketBase
     {
         public int Entity { get; set; }
@@ -274,7 +395,7 @@ namespace MCLib.Networking.Packets
         public byte Pitch { get; set; }
     }
 
-    [Packet(Id = Packet.EntityVelocity)]
+    [Packet(ID = Packet.EntityVelocity)]
     public class EntityVelocity : PacketBase
     {
         public int Entity { get; set; }
@@ -283,19 +404,19 @@ namespace MCLib.Networking.Packets
         public short Z { get; set; }
     }
 
-    [Packet(Id = Packet.DestroyEntity)]
+    [Packet(ID = Packet.DestroyEntity)]
     public class DestroyEntity : PacketBase
     {
         public int Entity { get; set; }
     }
 
-    [Packet(Id = Packet.Entity)]
+    [Packet(ID = Packet.Entity)]
     public class Entity : PacketBase
     {
         public int EID { get; set; }
     }
 
-    [Packet(Id = Packet.EntityRelativeMove)]
+    [Packet(ID = Packet.EntityRelativeMove)]
     public class EntityRelativeMove : PacketBase
     {
         public int EID { get; set; }
@@ -304,7 +425,7 @@ namespace MCLib.Networking.Packets
         public byte Z { get; set; }
     }
 
-    [Packet(Id = Packet.EntityLook)]
+    [Packet(ID = Packet.EntityLook)]
     public class EntityLook : PacketBase
     {
         public int EID { get; set; }
@@ -312,7 +433,7 @@ namespace MCLib.Networking.Packets
         public byte Pitch { get; set; }
     }
 
-    [Packet(Id = Packet.EntityLookRelativeMove)]
+    [Packet(ID = Packet.EntityLookRelativeMove)]
     public class EntityLookRelativeMove : PacketBase
     {
         public int EID { get; set; }
@@ -323,7 +444,7 @@ namespace MCLib.Networking.Packets
         public byte Pitch { get; set; }
     }
 
-    [Packet(Id = Packet.EntityTeleport)]
+    [Packet(ID = Packet.EntityTeleport)]
     public class EntityTeleport : PacketBase
     {
         public int EID { get; set; }
@@ -334,21 +455,21 @@ namespace MCLib.Networking.Packets
         public byte Pitch { get; set; }
     }
 
-    [Packet(Id = Packet.EntityStatus)]
+    [Packet(ID = Packet.EntityStatus)]
     public class EntityStatus : PacketBase
     {
         public int EID { get; set; }
         public byte Status { get; set; }
     }
 
-    [Packet(Id = Packet.AttachEntity)]
+    [Packet(ID = Packet.AttachEntity)]
     public class AttachEntity : PacketBase
     {
         public int EID { get; set; }
         public int Vehicle { get; set; }
     }
 
-    [Packet(Id = Packet.PreChunk)]
+    [Packet(ID = Packet.PreChunk)]
     public class PreChunk : PacketBase
     {
         public int X { get; set; }
@@ -356,7 +477,7 @@ namespace MCLib.Networking.Packets
         public bool Mode { get; set; }
     }
 
-    [Packet(Id = Packet.MapChunk)]
+    [Packet(ID = Packet.MapChunk)]
     public class MapChunk : PacketBase
     {
         public int X { get; set; }
@@ -395,7 +516,7 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.MultiBlockChange)]
+    [Packet(ID = Packet.MultiBlockChange)]
     public class MultiBlockChange : PacketBase
     {
         public int X { get; set; }
@@ -436,7 +557,7 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.BlockChange)]
+    [Packet(ID = Packet.BlockChange)]
     public class BlockChange : PacketBase
     {
         public int X { get; set; }
@@ -447,7 +568,7 @@ namespace MCLib.Networking.Packets
         public byte Metadata { get; set; }
     }
 
-    [Packet(Id = Packet.Explosion)]
+    [Packet(ID = Packet.Explosion)]
     public class Explosion : PacketBase
     {
         public double X { get; set; }
@@ -491,7 +612,7 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.InventoryOpen)]
+    [Packet(ID = Packet.InventoryOpen)]
     public class InventoryOpen : PacketBase
     {
         public byte InvId { get; set; }
@@ -500,13 +621,13 @@ namespace MCLib.Networking.Packets
         public byte InvSlots { get; set; }
     }
 
-    [Packet(Id = Packet.InventoryClose)]
+    [Packet(ID = Packet.InventoryClose)]
     public class InventoryClose : PacketBase
     {
         public byte InvId { get; set; }
     }
 
-    [Packet(Id = Packet.InventoryClick)]
+    [Packet(ID = Packet.InventoryClick)]
     public class InventoryClick : PacketBase
     {
         public byte InvId { get; set; }
@@ -544,7 +665,7 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.InventoryUpdate)]
+    [Packet(ID = Packet.InventoryUpdate)]
     public class InventoryUpdate : PacketBase
     {
         public byte InvId { get; set; }
@@ -576,7 +697,7 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.InventoryFullUpdate)]
+    [Packet(ID = Packet.InventoryFullUpdate)]
     public class InventoryFullUpdate : PacketBase
     {
         public byte Type { get; set; }
@@ -624,23 +745,23 @@ namespace MCLib.Networking.Packets
         }
     }
 
-    [Packet(Id = Packet.UpdateProgressBar)]
+    [Packet(ID = Packet.UpdateProgressBar)]
     public class Unknown1 : PacketBase
     {
-        public byte Dunno1 { get; set; }
-        public short Dunno2 { get; set; }
-        public short Dunno3 { get; set; }
+        public byte WindowID { get; set; }
+        public short ProgressBar { get; set; }
+        public short Value { get; set; }
     }
 
-    [Packet(Id = Packet.Transaction)]
+    [Packet(ID = Packet.Transaction)]
     public class Unknown2 : PacketBase
     {
-        public byte Dunno1 { get; set; }
-        public short Dunno2 { get; set; }
-        public bool Dunno3 { get; set; }
+        public byte WindowID { get; set; }
+        public short Action { get; set; }
+        public bool Accepted { get; set; }
     }
 
-    [Packet(Id = Packet.SignUpdate)]
+    [Packet(ID = Packet.SignUpdate)]
     public class SignUpdate : PacketBase
     {
         public int X { get; set; }
@@ -653,7 +774,7 @@ namespace MCLib.Networking.Packets
         public string Line4 { get; set; }
     }
 
-    [Packet(Id = Packet.Disconnect)]
+    [Packet(ID = Packet.Disconnect)]
     public class Disconnect : PacketBase
     {
         public string Reason { get; set; }
